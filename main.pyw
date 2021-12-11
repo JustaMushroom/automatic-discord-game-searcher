@@ -5,16 +5,8 @@ from time import sleep as wait
 import requests
 import json
 
-#file = open("data.txt", "r", encoding="utf8")
-#file = open("gameslist.json", "r", encoding="utf8")
-#data = file.read()
-
-#data = requests.get("https://discordapp.com/api/v6/applications/detectable").json()
-
-#skuKey = "primarySkuId"
 skuKey = "primary_sku_id"
 
-#datajson = json.loads(data)
 datajson = requests.get("https://discordapp.com/api/v6/applications/detectable").json()
 
 root = Tk()
@@ -48,8 +40,6 @@ def start():
 	updateThread.start()
 	wait(0.1)
 	searchT.start()
-	#wait(2)
-	#root.after(2000, cbtn.config(state = "normal"))
 
 def cancelSearch():
 	btn["state"] = "normal"
@@ -87,9 +77,7 @@ def search(queue_out, event_out, term_event_out, term_event_in):
 	workingSKUS = []
 	SKUCount = 0
 
-	#lb0.config(text="checked {} out of {} games".format("0", len(datajson)))
 	queue_out.put("Checked {} out of {} games".format("0", len(datajson)))
-	#lb1.config(text="Starting...")
 	queue_out.put("Starting")
 	queue_out.put("Please wait...")
 	queue_out.put(0)
@@ -99,17 +87,15 @@ def search(queue_out, event_out, term_event_out, term_event_in):
 
 	wait(2)
 	for item in datajson:
-		#print("[ {} / {}] Attempting {}...".format(cItem, maxItems, item["name"]))
 		try:
-			#print("[ {} / {}] Found {}: {}".format(cItem, maxItems, skuKey, item[skuKey]))
 			r = requests.get("https://discordapp.com/api/v6/store/published-listings/skus/{}".format(item[skuKey]))
 			if r.status_code == 404:
-				#print("[ {} / {}] Discord: SKU Not Found".format(cItem, maxItems))
 				pass
 			elif r.status_code == 200:
 				workingSKUS.append(item)
+			elif r.status_code == 429:
+				wait(10)
 			else:
-				#print("[ {} / {}] Discord: Unknown Response: {}".format(cItem, maxItems, r.status_code))
 				pass
 			SKUCount += 1
 
@@ -119,14 +105,10 @@ def search(queue_out, event_out, term_event_out, term_event_in):
 
 		while not queue_out.empty():
 			pass
-		#lb0.config(text="checked {} out of {} games".format(cItem - 1, len(datajson)))
 		queue_out.put("Checked {} out of {} games".format(cItem - 1, len(datajson)))
-		#lb1.config(text="Checking {}".format(item["name"]))
 		queue_out.put("Checking {}".format(item["name"]))
-		#lb2.config(text="Found {} working SKUs so far".format(len(workingSKUS)))
 		queue_out.put("{} SKU IDs have been checked and I've found {} working SKUs so far".format(SKUCount, len(workingSKUS)))
 		queue_out.put(cItem - 1)
-		#root.update()
 		event_out.set()
 
 		wait(1)
@@ -134,20 +116,16 @@ def search(queue_out, event_out, term_event_out, term_event_in):
 			print("[Search]: Terminating...")
 			term_event_out.set()
 			return
-		#root.after(1000, None)
 
 	listString = []
 
 	for item in workingSKUS:
 		listString.append("{} : https://discord.com/store/skus/{}".format(item["name"], item[skuKey]))
 
-	#print("A total of {} working SKUs were found, a list is below:\n\n{}".format(len(workingSKUS), "\n".join(listString)))
 
-	outputfile = open("output.txt", "w")
-	outputfile.write("\n".join(listString))
+	with open("output.txt", "w") as outputfile:
+		outputfile.write("\n".join(listString))
 
-	#lb1.config(text="Completed! Please check the console.")
-	#lb2.config(text="Found {} working SKUs".format(len(workingSKUS)))
 	queue_out.put(lb0["text"])
 	queue_out.put("Completed! Please check the new output.txt file")
 	queue_out.put("Found {} working SKUs".format(len(workingSKUS)))
