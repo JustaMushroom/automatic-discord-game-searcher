@@ -52,17 +52,21 @@ def updateGUI(in_queue, in_event, term_event_in):
 		is_set = in_event.wait(10)
 
 		if is_set:
-			lb0text = in_queue.get()
-			lb1text = in_queue.get()
-			lb2text = in_queue.get()
-			pbvalue = in_queue.get()
+			try:
+				lb0text = in_queue.get()
+				lb1text = in_queue.get()
+				lb2text = in_queue.get()
+				pbvalue = in_queue.get()
 
-			lb0.config(text = lb0text)
-			lb1.config(text = lb1text)
-			lb2.config(text = lb2text)
-			pb["value"] = pbvalue
+				lb0.config(text = lb0text)
+				lb1.config(text = lb1text)
+				lb2.config(text = lb2text)
+				pb["value"] = pbvalue
 
-			in_event.clear()
+				in_event.clear()
+			except Exception:
+				s_term_event.set()
+				term_event_in.set()
 
 		if term_event_in.is_set() is True:
 			print("[Update]: Terminating...")
