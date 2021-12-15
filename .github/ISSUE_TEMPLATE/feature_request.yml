@@ -5,6 +5,9 @@ labels: ["enhancement"]
 assignees:
   - JustaMushroom
 body:
+- type: markdown
+  attributes:
+    value: "**Before submitting your feature request, please confirm that the feature has not already been requested!**"
 - type: textarea
   id: desc
   attributes:
