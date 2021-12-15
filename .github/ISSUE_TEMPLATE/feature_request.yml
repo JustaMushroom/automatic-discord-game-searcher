@@ -1,6 +1,6 @@
 name: Feature Request
 description: Report unexpected behaviour or crashes
-title: "[FR]: "
+title: "[REQUEST]: "
 labels: ["enhancement"]
 assignees:
   - JustaMushroom
