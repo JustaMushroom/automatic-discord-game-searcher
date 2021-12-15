@@ -1,0 +1,21 @@
+name: Feature Request
+description: Report unexpected behaviour or crashes
+title: "[FR]: "
+labels: ["enhancement"]
+assignees:
+  - JustaMushroom
+body:
+- type: textarea
+  id: desc
+  attributes:
+    label: Feature Description
+    description: Please describe the suggested feature
+  validations:
+    required: true
+- type: checkboxes
+  id: terms
+  attributes:
+    label: Issue terms
+    options:
+      - label: I have checked and confirmed that this feature has not already been requested
+        required: true
