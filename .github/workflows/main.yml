@@ -23,7 +23,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         if: |
-          contains(github.event.issue.labels.*.name, "bug")
+          contains(github.event.issue.labels.*.name, 'bug')
           
         with:
           project: https://github.com/JustaMushroom/automatic-discord-game-searcher/projects/1
