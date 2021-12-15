@@ -2,13 +2,25 @@ from threading import Thread, Event
 from queue import Queue
 from tkinter import Tk, ttk
 from time import sleep as wait
+from loggingFramework import Logger
 import requests
 import json
+import sys
+
+logger = Logger()
+
+def handle_exception(etype, value, traceback):
+	logger.logException(value)
+	quit()
+
+sys.excepthook = handle_exception
 
 skuKey = "primary_sku_id"
 
+logger.logInfo("Getting games list")
 datajson = requests.get("https://discordapp.com/api/v6/applications/detectable").json()
 
+logger.logInfo("Building Interface")
 root = Tk()
 root.title("Search Discord for games!")
 root.geometry('400x250+1000+300')
@@ -28,6 +40,7 @@ term_event = Event()
 s_term_event = Event()
 
 def start():
+	logger.logInfo("Starting...")
 	global updateThread
 	global searchT
 	s_term_event.clear()
@@ -47,7 +60,7 @@ def cancelSearch():
 	s_term_event.set()
 
 def updateGUI(in_queue, in_event, term_event_in):
-	print("[Update]: Starting...")
+	logger.logInfo("[Update]: Starting...", True)
 	while True:
 		is_set = in_event.wait(10)
 
@@ -64,18 +77,19 @@ def updateGUI(in_queue, in_event, term_event_in):
 				pb["value"] = pbvalue
 
 				in_event.clear()
-			except Exception:
+			except Exception as e:
+				logger.logException(e)
 				s_term_event.set()
 				term_event_in.set()
 
 		if term_event_in.is_set() is True:
-			print("[Update]: Terminating...")
+			logger.logInfo("[Update]: Terminating...", True)
 			return
 
 
 
 def search(queue_out, event_out, term_event_out, term_event_in):
-	print("[Search]: Starting...")
+	logger.logInfo("[Search]: Starting...", True)
 	maxItems = len(datajson)
 	cItem = 1
 	workingSKUS = []
@@ -92,19 +106,24 @@ def search(queue_out, event_out, term_event_out, term_event_in):
 	wait(2)
 	for item in datajson:
 		try:
-			r = requests.get("https://discordapp.com/api/v6/store/published-listings/skus/{}".format(item[skuKey]))
-			if r.status_code == 404:
-				pass
-			elif r.status_code == 200:
-				workingSKUS.append(item)
-			elif r.status_code == 429:
-				wait(10)
-			else:
-				pass
-			SKUCount += 1
+			while True:
+				r = requests.get("https://discordapp.com/api/v6/store/published-listings/skus/{}".format(item[skuKey]))
+				if r.status_code == 404:
+					break
+				elif r.status_code == 200:
+					workingSKUS.append(item)
+					break
+				elif r.status_code == 429:
+					wait(10)
+					continue
+				else:
+					break
+				SKUCount += 1
 
 		except KeyError:
 			pass
+		except Exception as e:
+			logger.logException(e)
 		cItem += 1
 
 		while not queue_out.empty():
@@ -117,7 +136,7 @@ def search(queue_out, event_out, term_event_out, term_event_in):
 
 		wait(1)
 		if term_event_in.is_set():
-			print("[Search]: Terminating...")
+			logger.logInfo("[Search]: Terminating...", True)
 			term_event_out.set()
 			return
 
@@ -126,7 +145,7 @@ def search(queue_out, event_out, term_event_out, term_event_in):
 	for item in workingSKUS:
 		listString.append("{} : https://discord.com/store/skus/{}".format(item["name"], item[skuKey]))
 
-
+	logger.logInfo("Writing to file...")
 	with open("output.txt", "w") as outputfile:
 		outputfile.write("\n".join(listString))
 
@@ -144,4 +163,5 @@ cbtn = ttk.Button(root, text="Cancel", command=cancelSearch)
 cbtn["state"] = "disabled"
 cbtn.pack()
 
+logger.logInfo("Interface built, starting main loop!")
 root.mainloop()
