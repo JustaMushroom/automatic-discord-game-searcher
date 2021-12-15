@@ -20,7 +20,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Assign to One Project
         uses: srggrs/assign-one-project-github-action@1.3.1
         if: |
@@ -29,3 +28,13 @@ jobs:
         with:
           project: 'https://github.com/JustaMushroom/automatic-discord-game-searcher/projects/1'
           column_name: "Needs triage"
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Assign to One Project
+        uses: srggrs/assign-one-project-github-action@1.3.1
+        if: |
+          contains(github.event.issue.labels.*.name, 'enhancement')
+          
+        with:
+          project: 'https://github.com/JustaMushroom/automatic-discord-game-searcher/projects/2'
+          column_name: "To do"
