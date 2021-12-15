@@ -1,0 +1,20 @@
+name: Bug Report
+description: Report unexpected behaviour of modules
+title: "[BUG]: "
+labels: ["bug"]
+assignees:
+  - JustaMushroom
+body:
+- type: textarea
+  id: error
+  attributes:
+    label: Issue
+    description: Please describe the issue
+- type: checkboxes
+  id: terms
+  attributes:
+    label: Issue terms
+    description: Before submitting this issue, please confirm that the issue has not already been reported
+    options:
+      - label: I have checked and confirmed that this issue has not already been reported before
+        required: true
