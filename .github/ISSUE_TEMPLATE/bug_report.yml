@@ -1,7 +1,7 @@
 name: Bug Report
 description: Report unexpected behaviour or crashes
 title: "[BUG]: "
-labels: ["bug"]
+labels: ["bug", "Needs triage"]
 assignees:
   - JustaMushroom
 body:
