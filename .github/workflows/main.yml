@@ -28,3 +28,4 @@ jobs:
           
         with:
           project: 'https://github.com/JustaMushroom/automatic-discord-game-searcher/projects/1'
+          column_name: "Needs triage"
