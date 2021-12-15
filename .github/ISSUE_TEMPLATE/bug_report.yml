@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report unexpected behaviour of modules
+description: Report unexpected behaviour or crashes
 title: "[BUG]: "
 labels: ["bug"]
 assignees:
