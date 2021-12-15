@@ -10,6 +10,13 @@ body:
   attributes:
     label: Issue
     description: Please describe the issue
+  validations:
+    required: true
+- type: textarea
+  id: log
+  attributes:
+    label: Logs
+    description: Please paste the contents of output.log here
 - type: checkboxes
   id: terms
   attributes:
