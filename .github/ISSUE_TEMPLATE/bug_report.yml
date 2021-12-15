@@ -6,7 +6,7 @@ assignees:
   - JustaMushroom
 body:
 - type: markdown
-  value: "**Before submitting your issue, please confirm that it has not already been reported!**"
+    value: "**Before submitting your issue, please confirm that it has not already been reported!**"
 - type: textarea
   id: error
   attributes:
